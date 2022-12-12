@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    <meta name="description" content="Hexo Theme Redefine">
+    <meta name="author" content="Jun-ho Chae">
+    
+    <title>
+        
+            How can I reduce the memory processing large dataset(Array, Tensor, etc.) in PyTorch? |
+        
+        Jun-ho Chae&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/c-solid.svg">
+    
+<link rel="stylesheet" href="/css/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/v5-font-face.min.css">
+
+    
+<link rel="stylesheet" href="/css/duotone.min.css">
+
+    
+<link rel="stylesheet" href="/css/brands.min.css">
+
+    
+<link rel="stylesheet" href="/css/solid.min.css">
+
+    
+<link rel="stylesheet" href="/css/css2.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script id="hexo-configurations">
+    let REDEFINE = window.REDEFINE || {};
+    REDEFINE.hexo_config = {"hostname":"example.com","root":"/","language":"en","path":"search.json"};
+    REDEFINE.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#005080","avatar":"/images/c-solid.svg","favicon":"/images/c-solid.svg","article_img_align":"center","right_side_width":"210px","content_max_width":"1000px","nav_color":{"left":"#f78736","right":"#367df7","transparency":35},"hover":{"shadow":true,"scale":false},"first_screen":{"enable":true,"background_image":{"light":"/images/light111.jpg","dark":"/images/dark111.jpg"},"title_color":{"light":"#fff","dark":"#d1d1b6"},"description":"Welcome to my Blog. Have a nice day! 😊"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"0.3.5"};
+    REDEFINE.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+    
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Jun-ho Chae&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               target="_blank" rel="noopener" href="https://blog.csdn.net/cjh0318"
+                            >
+                                LINKS
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                ABOUT
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       target="_blank" rel="noopener" href="https://blog.csdn.net/cjh0318">LINKS</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">ABOUT</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="post-page-container">
+        <div class="article-content-container">
+            <div class="article-title">
+                <span class="title-hover-animation"><h1 style="font-size:2rem; font-weight: bold; margin: 10px 0;">How can I reduce the memory processing large dataset(Array, Tensor, etc.) in PyTorch?</h1></span>
+            </div>
+
+            
+                <div class="article-header">
+                    <div class="avatar">
+                        <img src="/images/c-solid.svg">
+                    </div>
+                    <div class="info">
+                        <div class="author">
+                            <span class="name">Jun-ho Chae</span>
+                            
+                                <span class="author-label">lol</span>
+                            
+                        </div>
+                        <div class="meta-info">
+                            <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-duotone fa-pen-line"></i>&nbsp;
+        <span class="pc">2022-12-12 23:52:29</span>
+        <span class="mobile">2022-12-12 23:52</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="article-content markdown-body">
+                <h1 id="The-introduction-When-I-was-processing-the-very-large-data-set-I-wanted-to-reduce-that-stored-in-my-memory-to-run-through-my-MacBook-😭-I-know-that-is-poor-for-deep-learning"><a href="#The-introduction-When-I-was-processing-the-very-large-data-set-I-wanted-to-reduce-that-stored-in-my-memory-to-run-through-my-MacBook-😭-I-know-that-is-poor-for-deep-learning" class="headerlink" title="The introduction: When I was processing the very large data set, I wanted to reduce that stored in my memory to run through my MacBook(😭), I know that is poor for deep learning."></a>The introduction: When I was processing the very large data set, I wanted to reduce that stored in my memory to run through my MacBook(😭), I know that is poor for deep learning.</h1><h2 id="Start-When-we-process-the-data-we-will-copy-the-tensor-or-list-etc-😊-So-let’s-read-the-code-detail-of-Python"><a href="#Start-When-we-process-the-data-we-will-copy-the-tensor-or-list-etc-😊-So-let’s-read-the-code-detail-of-Python" class="headerlink" title="Start: When we process the data we will copy the tensor or list etc. 😊 So let’s read the code detail of Python."></a>Start: When we process the data we will copy the tensor or list etc. 😊 So let’s read the code detail of Python.</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line">c = <span class="number">1</span></span><br><span class="line">before = <span class="built_in">id</span>(b)</span><br><span class="line">b += c</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(b) == before)</span><br><span class="line">d = <span class="number">1</span></span><br><span class="line">e = <span class="number">1</span></span><br><span class="line">d = d + e</span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(d) == before)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/bb418c8da9044fab871f9d3dc3ed3151.png"
+                      alt="请添加图片描述"
+                ></p>
+<h3 id="In-that-case-I-thought-you-should-have-a-huge-‘Question-Mark’-and-“So-Is-it-a-new-land-in-the-world-”-😊-Let’s-go-next-step-🏃"><a href="#In-that-case-I-thought-you-should-have-a-huge-‘Question-Mark’-and-“So-Is-it-a-new-land-in-the-world-”-😊-Let’s-go-next-step-🏃" class="headerlink" title="In that case, I thought you should have a huge ‘Question Mark’ and “So??? Is it a new land in the world?” 😊 Let’s go next step. 🏃"></a>In that case, I thought you should have a huge ‘Question Mark’ and “So??? Is it a new land in the world?” 😊 Let’s go next step. 🏃</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = [<span class="number">1</span>]</span><br><span class="line">c = [<span class="number">1</span>]</span><br><span class="line">before = <span class="built_in">id</span>(b)</span><br><span class="line">b += c</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(b) == before)</span><br><span class="line">d = [<span class="number">1</span>]</span><br><span class="line">e = [<span class="number">1</span>]</span><br><span class="line">d = d + e</span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(d) == before)</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="Incredible-Amazing-🤯-What’s-that-why-do-I-add-the-around-the-1-integer-the-result-will-be-different-I-want-to-answer-you-in-the-last-chapter-😁-So-Let’s-go"><a href="#Incredible-Amazing-🤯-What’s-that-why-do-I-add-the-around-the-1-integer-the-result-will-be-different-I-want-to-answer-you-in-the-last-chapter-😁-So-Let’s-go" class="headerlink" title="Incredible, Amazing!! 🤯 What’s that? why do I add the [ ] around the 1 integer the result will be different? I want to answer you in the last chapter. 😁 So Let’s go!"></a>Incredible, Amazing!! 🤯 What’s that? why do I add the [ ] around the 1 integer the result will be different? I want to answer you in the last chapter. 😁 So Let’s go!</h4><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/fdce1aaa73184a96922c90749235380e.png"
+                      alt="请添加图片描述"
+                ></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">b = torch.zeros(</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">)</span><br><span class="line">c = torch.ones(</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">)</span><br><span class="line">before = <span class="built_in">id</span>(b)</span><br><span class="line">b += c</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(b) == before)</span><br><span class="line">d = torch.zeros(</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">)</span><br><span class="line">e = torch.ones(</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">)</span><br><span class="line">d = d + e</span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(d) == before)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/756e46ef351e45949de06d11b68bbbcc.png"
+                      alt="请添加图片描述"
+                ></p>
+<h2 id="Let’s-reveal-this-mysterious-veil！"><a href="#Let’s-reveal-this-mysterious-veil！" class="headerlink" title="Let’s reveal this mysterious veil！"></a>Let’s reveal this mysterious veil！</h2><h3 id="1-The-KEY-WORD-is-what-the-Immutable-element-and-mutable-element-are"><a href="#1-The-KEY-WORD-is-what-the-Immutable-element-and-mutable-element-are" class="headerlink" title="1. The KEY WORD is what the Immutable element and mutable element are."></a>1. The KEY WORD is what the Immutable element and mutable element are.</h3><ol>
+<li><h4 id="The-immutable-elements-Integers-floats-strings-tuples-etc"><a href="#The-immutable-elements-Integers-floats-strings-tuples-etc" class="headerlink" title="The immutable elements: Integers, floats, strings, tuples, etc."></a>The immutable elements: Integers, floats, strings, tuples, etc.</h4></li>
+<li><h4 id="The-mutable-elements-Lists-Dictionaries-Tensors-etc"><a href="#The-mutable-elements-Lists-Dictionaries-Tensors-etc" class="headerlink" title="The mutable elements: Lists, Dictionaries, Tensors, etc."></a>The mutable elements: Lists, Dictionaries, Tensors, etc.</h4></li>
+</ol>
+<h3 id="2-What-is-the-function-of-“-x3D-”"><a href="#2-What-is-the-function-of-“-x3D-”" class="headerlink" title="2. What is the function of “&#x3D;”?"></a>2. What is the function of “&#x3D;”?</h3><h4 id="Binding-an-object-reference-to-an-object-in-memory"><a href="#Binding-an-object-reference-to-an-object-in-memory" class="headerlink" title="Binding an object reference to an object in memory."></a>Binding an object reference to an object in memory.</h4><h3 id="3-How-does-the-“-x3D-”-work-in-the-changing-of-the-immutable-elements"><a href="#3-How-does-the-“-x3D-”-work-in-the-changing-of-the-immutable-elements" class="headerlink" title="3. How does the “&#x3D;” work in the changing of the immutable elements?"></a>3. How does the “&#x3D;” work in the changing of the immutable elements?</h3><h4 id="Directly-create-a-new-integer-value-in-memory-and-then-bind-the-variable-reference-to-it-So-The-type-of-an-immutable-element-“A-x3D-B”-is-the-same-as-“A-x3D-A-B”-😊"><a href="#Directly-create-a-new-integer-value-in-memory-and-then-bind-the-variable-reference-to-it-So-The-type-of-an-immutable-element-“A-x3D-B”-is-the-same-as-“A-x3D-A-B”-😊" class="headerlink" title="Directly create a new integer value in memory and then bind the variable reference to it. So, The type of an immutable element, “A +&#x3D; B” is the same as “A &#x3D; A + B”.😊."></a>Directly create a new integer value in memory and then bind the variable reference to it. So, The type of an immutable element, “A +&#x3D; B” is the same as “A &#x3D; A + B”.😊.</h4><h3 id="4-What-about-the-mutable-elements"><a href="#4-What-about-the-mutable-elements" class="headerlink" title="4. What about the mutable elements?"></a>4. What about the mutable elements?</h3><h4 id="As-you-see-using-the-“A-x3D-B”-Python-will-add-value-to-the-same-memory-area-By-contrast-using-the-“A-x3D-A-B”-Python-creates-a-new-variable-area-to-the-memory-and-computes-the-value-then-to-be-bound-by-the-variable-reference-“A”-👼"><a href="#As-you-see-using-the-“A-x3D-B”-Python-will-add-value-to-the-same-memory-area-By-contrast-using-the-“A-x3D-A-B”-Python-creates-a-new-variable-area-to-the-memory-and-computes-the-value-then-to-be-bound-by-the-variable-reference-“A”-👼" class="headerlink" title="As you see, using the “A +&#x3D; B” Python will add value to the same memory area. By contrast, using the “A &#x3D; A + B” Python creates a new variable area to the memory and computes the value then to be bound by the variable reference “A”. 👼"></a>As you see, using the “A +&#x3D; B” Python will add value to the same memory area. By contrast, using the “A &#x3D; A + B” Python creates a new variable area to the memory and computes the value then to be bound by the variable reference “A”. 👼</h4><h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><h3 id="I-should-get-into-the-habit-of-considering-the-difference-between-“A-x3D-B”-and-“A-x3D-A-B”-So-do-you-💗"><a href="#I-should-get-into-the-habit-of-considering-the-difference-between-“A-x3D-B”-and-“A-x3D-A-B”-So-do-you-💗" class="headerlink" title="I should get into the habit of considering the difference between “A+&#x3D;B” and “A &#x3D; A+ B”. So do you. 💗"></a>I should get into the habit of considering the difference between “A+&#x3D;B” and “A &#x3D; A+ B”. So do you. 💗</h3>
+            </div>
+
+            
+                <div class="post-copyright-info">
+                    <div class="article-copyright-info-container">
+    <ul>
+        <li>Post title：How can I reduce the memory processing large dataset(Array, Tensor, etc.) in PyTorch?</li>
+        <li>Post author：Jun-ho Chae</li>
+        <li>Create time：2022-12-12 23:52:29</li>
+        <li>
+            Post link：https://redefine.evanluo.top/2022/12/12/How can I reduce the memory processing large dataset(Array, Tensor, etc.) in Pytorch_/
+        </li>
+        <li>
+            Copyright Notice：All articles in this blog are licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> unless stating additionally.
+        </li>
+    </ul>
+</div>
+
+                </div>
+            
+
+            
+
+            
+                <div class="article-nav">
+                    
+                        <div class="article-prev">
+                            <a class="prev"
+                            rel="prev"
+                            href="/2022/12/12/The%20confusion%20of%20the%20parameter%20%E2%80%9Cdim%E2%80%9D%20in%20Pytorch.%20_/"
+                            >
+                                <span class="left arrow-icon flex-center">
+                                <i class="fas fa-chevron-left"></i>
+                                </span>
+                                <span class="title flex-center">
+                                    <span class="post-nav-title-item">The confusion of the parameter“dim”in PyTorch.</span>
+                                    <span class="post-nav-item">Prev posts</span>
+                                </span>
+                            </a>
+                        </div>
+                    
+                    
+                        <div class="article-next">
+                            <a class="next"
+                            rel="next"
+                            href="/2022/12/12/%E4%BD%BF%E7%94%A8SVM+Word2Vec%20%E8%A7%A3%E5%86%B3%E5%A4%96%E5%8D%96%E7%9A%84%E5%A5%BD%E8%AF%84%E5%9D%8F%E8%AF%84%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/"
+                            >
+                                <span class="title flex-center">
+                                    <span class="post-nav-title-item">Using SVM+Word2Vec to solve the problem of classifying good and bad reviews of takeaways</span>
+                                    <span class="post-nav-item">Next posts</span>
+                                </span>
+                                <span class="right arrow-icon flex-center">
+                                <i class="fas fa-chevron-right"></i>
+                                </span>
+                            </a>
+                        </div>
+                    
+                </div>
+            
+
+            
+                <div class="comment-container">
+                    <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;Comments</i>
+    </div>
+    
+
+        
+            
+
+        
+    
+</div>
+
+                </div>
+            
+        </div>
+
+        
+            <div class="toc-content-container">
+                <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div style="font-size: 1.3rem;margin-top: 0; margin-bottom: 0.8rem; transition-duration: 0.1s;"><i class="fa-solid fa-list"></i> <strong>Contents</strong></div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#The-introduction-When-I-was-processing-the-very-large-data-set-I-wanted-to-reduce-that-stored-in-my-memory-to-run-through-my-MacBook-%F0%9F%98%AD-I-know-that-is-poor-for-deep-learning"><span class="nav-text">The introduction: When I was processing the very large data set, I wanted to reduce that stored in my memory to run through my MacBook(😭), I know that is poor for deep learning.</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Start-When-we-process-the-data-we-will-copy-the-tensor-or-list-etc-%F0%9F%98%8A-So-let%E2%80%99s-read-the-code-detail-of-Python"><span class="nav-text">Start: When we process the data we will copy the tensor or list etc. 😊 So let’s read the code detail of Python.</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#In-that-case-I-thought-you-should-have-a-huge-%E2%80%98Question-Mark%E2%80%99-and-%E2%80%9CSo-Is-it-a-new-land-in-the-world-%E2%80%9D-%F0%9F%98%8A-Let%E2%80%99s-go-next-step-%F0%9F%8F%83"><span class="nav-text">In that case, I thought you should have a huge ‘Question Mark’ and “So??? Is it a new land in the world?” 😊 Let’s go next step. 🏃</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Incredible-Amazing-%F0%9F%A4%AF-What%E2%80%99s-that-why-do-I-add-the-around-the-1-integer-the-result-will-be-different-I-want-to-answer-you-in-the-last-chapter-%F0%9F%98%81-So-Let%E2%80%99s-go"><span class="nav-text">Incredible, Amazing!! 🤯 What’s that? why do I add the [ ] around the 1 integer the result will be different? I want to answer you in the last chapter. 😁 So Let’s go!</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Let%E2%80%99s-reveal-this-mysterious-veil%EF%BC%81"><span class="nav-text">Let’s reveal this mysterious veil！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-The-KEY-WORD-is-what-the-Immutable-element-and-mutable-element-are"><span class="nav-text">1. The KEY WORD is what the Immutable element and mutable element are.</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#The-immutable-elements-Integers-floats-strings-tuples-etc"><span class="nav-text">The immutable elements: Integers, floats, strings, tuples, etc.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#The-mutable-elements-Lists-Dictionaries-Tensors-etc"><span class="nav-text">The mutable elements: Lists, Dictionaries, Tensors, etc.</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-What-is-the-function-of-%E2%80%9C-x3D-%E2%80%9D"><span class="nav-text">2. What is the function of “&#x3D;”?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Binding-an-object-reference-to-an-object-in-memory"><span class="nav-text">Binding an object reference to an object in memory.</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-How-does-the-%E2%80%9C-x3D-%E2%80%9D-work-in-the-changing-of-the-immutable-elements"><span class="nav-text">3. How does the “&#x3D;” work in the changing of the immutable elements?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Directly-create-a-new-integer-value-in-memory-and-then-bind-the-variable-reference-to-it-So-The-type-of-an-immutable-element-%E2%80%9CA-x3D-B%E2%80%9D-is-the-same-as-%E2%80%9CA-x3D-A-B%E2%80%9D-%F0%9F%98%8A"><span class="nav-text">Directly create a new integer value in memory and then bind the variable reference to it. So, The type of an immutable element, “A +&#x3D; B” is the same as “A &#x3D; A + B”.😊.</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-What-about-the-mutable-elements"><span class="nav-text">4. What about the mutable elements?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#As-you-see-using-the-%E2%80%9CA-x3D-B%E2%80%9D-Python-will-add-value-to-the-same-memory-area-By-contrast-using-the-%E2%80%9CA-x3D-A-B%E2%80%9D-Python-creates-a-new-variable-area-to-the-memory-and-computes-the-value-then-to-be-bound-by-the-variable-reference-%E2%80%9CA%E2%80%9D-%F0%9F%91%BC"><span class="nav-text">As you see, using the “A +&#x3D; B” Python will add value to the same memory area. By contrast, using the “A &#x3D; A + B” Python creates a new variable area to the memory and computes the value then to be bound by the variable reference “A”. 👼</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-text">Conclusion</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-should-get-into-the-habit-of-considering-the-difference-between-%E2%80%9CA-x3D-B%E2%80%9D-and-%E2%80%9CA-x3D-A-B%E2%80%9D-So-do-you-%F0%9F%92%97"><span class="nav-text">I should get into the habit of considering the difference between “A+&#x3D;B” and “A &#x3D; A+ B”. So do you. 💗</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+            </div>
+        
+    </div>
+</div>
+
+
+                
+
+            </div>
+
+
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">Jun-ho Chae</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        Visitor Count&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        Totalview&nbsp;<span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v0.3.5</a>
+        </div>
+        
+        
+    </div>
+    <link rel="stylesheet" href="//evan.beee.top/css/waline.css"/>
+    <script src="//evan.beee.top/js/waline.js"></script>
+    
+<link rel="stylesheet" href="/css/regular.min.css">
+
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fa-duotone fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-duotone fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            REDEFINE.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            REDEFINE.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            REDEFINE.refresh();
+        });
+    });
+</script>
+
+
+
+</body>
+</html>
